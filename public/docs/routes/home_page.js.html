@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>home_page.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "", thisFile = "C:\\Users\\Ant\\Documents\\GitHub\\TeamBrettonWoods\\Project\\\\home_page.js", defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h3">
+        <a href="#display-home-page-after-checking-user-s-auth-status">Display home page after checking user's auth status</a>
+      </div>
+      <div class="heading h3">
+        <a href="#gets-people-s-birthday-and-generates-the-appropriate-notification">Gets people's birthday and generates the appropriate notification</a>
+      </div>
+      <div class="heading h3">
+        <a href="#takes-the-user-who-will-get-the-notifications-as-input">Takes the user who will get the notifications as input</a>
+      </div>
+      <div class="heading h3">
+        <a href="#returns-a-list-of-notification-strings">Returns a list of notification strings</a>
+      </div>
+      <div class="heading h3">
+        <a href="#support-for-creating-new-twits">Support for creating new twits</a>
+      </div>
+      <div class="heading h3">
+        <a href="#redirects-to-the-user-s-profile-page--your-own-or-others--">Redirects to the user's profile page (your own or others')</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>home_page.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">userlib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib/user&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">user_sessions</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./user_sessions&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">topiclib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib/topic&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">twittlib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib/twitt&#39;</span><span class="p">)</span>
+
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="display-home-page-after-checking-user-s-auth-status">
+  <h3>
+    <a href="#display-home-page-after-checking-user-s-auth-status" class="pilcrow">&#182;</a>
+    Display home page after checking user's auth status
+  </h3>
+</div>
+
+
+<p>Requires a request and a response object as parameters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">displayPage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Check if user is logged in already</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span><span class="p">(</span><span class="nx">sessCheck</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">===</span> <span class="kc">true</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<div class="dox">
+  <div class="summary"><p>If user is logged in, we render a homepage view 
+ with topics and twitts related to this user</p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">theUser</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">topiclist</span> <span class="o">=</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">listTopics</span><span class="p">(</span><span class="nx">theUser</span><span class="p">.</span><span class="nx">username</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">twittlist</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">t</span> <span class="k">in</span> <span class="nx">topiclist</span><span class="p">){</span>
+      <span class="nx">twittlist</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">topiclib</span><span class="p">.</span><span class="nx">listTwitts</span><span class="p">(</span><span class="nx">topiclist</span><span class="p">[</span><span class="nx">t</span><span class="p">].</span><span class="nx">name</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;home_page&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Twittim Homepage&#39;</span><span class="p">,</span>
+    <span class="nx">twitts</span> <span class="o">:</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">listTwitts</span><span class="p">(</span><span class="nx">theUser</span><span class="p">.</span><span class="nx">username</span><span class="p">),</span>
+    <span class="nx">topics</span> <span class="o">:</span> <span class="nx">topiclist</span><span class="p">,</span>
+    <span class="nx">topictwitts</span> <span class="o">:</span> <span class="nx">twittlist</span><span class="p">,</span>
+    <span class="nx">usersfollowed</span> <span class="o">:</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">listUsersFollowed</span><span class="p">(</span><span class="nx">theUser</span><span class="p">.</span><span class="nx">username</span><span class="p">),</span>
+    <span class="nx">numusersfollowing</span> <span class="o">:</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">numUsersFollowing</span><span class="p">(</span><span class="nx">theUser</span><span class="p">.</span><span class="nx">username</span><span class="p">),</span>
+    <span class="nx">usertwitts</span> <span class="o">:</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">listLatestTwitts</span><span class="p">(</span><span class="nx">theUser</span><span class="p">.</span><span class="nx">username</span><span class="p">),</span>
+    <span class="nx">currentUser</span> <span class="o">:</span> <span class="nx">theUser</span><span class="p">,</span>
+    <span class="nx">isBirthdayToday</span> <span class="o">:</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">isBirthdayToday</span><span class="p">(</span><span class="nx">theUser</span><span class="p">),</span>
+    <span class="nx">birthdayNotifications</span> <span class="o">:</span> <span class="nx">getBirthdayNotifications</span><span class="p">(</span><span class="nx">theUser</span><span class="p">)});</span>
+  <span class="p">}</span>
+  <span class="k">else</span><span class="p">{</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;Please log in. &#39;</span><span class="p">);</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="gets-people-s-birthday-and-generates-the-appropriate-notification">
+  <h3>
+    <a href="#gets-people-s-birthday-and-generates-the-appropriate-notification" class="pilcrow">&#182;</a>
+    Gets people's birthday and generates the appropriate notification
+  </h3>
+</div>
+
+
+
+<div class="pilwrap" id="takes-the-user-who-will-get-the-notifications-as-input">
+  <h3>
+    <a href="#takes-the-user-who-will-get-the-notifications-as-input" class="pilcrow">&#182;</a>
+    Takes the user who will get the notifications as input
+  </h3>
+</div>
+
+
+
+<div class="pilwrap" id="returns-a-list-of-notification-strings">
+  <h3>
+    <a href="#returns-a-list-of-notification-strings" class="pilcrow">&#182;</a>
+    Returns a list of notification strings
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">getBirthdayNotifications</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">user</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">notifications</span> <span class="o">=</span> <span class="p">[];</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>get the id of people who the current user follow</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="kd">var</span> <span class="nx">idOfUsersFollowed</span> <span class="o">=</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">listUsersFollowed</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>if this user does not follow anyone, we just return an empty array
+indicating that there is no notification</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">idOfUsersFollowed</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="p">[];</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Gets a list of all users who this user follows and will have birthday in 7 days</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">idOfUsersFollowed</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>get one persone this user follow</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">userFollowed</span> <span class="o">=</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">findUserWithID</span><span class="p">(</span><span class="nx">idOfUsersFollowed</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+    <span class="kd">var</span> <span class="nx">birthday</span> <span class="o">=</span> <span class="nx">userFollowed</span><span class="p">.</span><span class="nx">birthday</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>change the year of his birthday to current year so that we can easily compare it
+to the current date</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">originalYear</span> <span class="o">=</span> <span class="nx">birthday</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">();</span>
+    <span class="nx">birthday</span><span class="p">.</span><span class="nx">setYear</span><span class="p">((</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">getFullYear</span><span class="p">());</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>milisecond is first the milisecond from this current time back to Jan, 1, 1970</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">numberOfMilliseconds</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">parse</span><span class="p">((</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">toDateString</span><span class="p">());</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-12" id="section-12">&#182;</a>
+</div>
+<p>now milisecond will be the difference between userFollowed's birthday and this current time</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">numberOfMilliseconds</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">birthday</span><span class="p">.</span><span class="nx">toDateString</span><span class="p">())</span> <span class="o">-</span> <span class="nx">numberOfMilliseconds</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-13" id="section-13">&#182;</a>
+</div>
+<p>set year of birthday back to original</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">birthday</span><span class="p">.</span><span class="nx">setYear</span><span class="p">(</span><span class="nx">originalYear</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-14" id="section-14">&#182;</a>
+</div>
+<p>calculate the days difference between userFollowed's birthday and current day</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">numberOfDays</span> <span class="o">=</span> <span class="nx">numberOfMilliseconds</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">/</span> <span class="mi">24</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-15" id="section-15">&#182;</a>
+</div>
+<p>Creates notification about this userFollowed</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">notif</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="p">();</span>
+    <span class="nx">notif</span><span class="p">.</span><span class="nx">username</span> <span class="o">=</span> <span class="nx">userFollowed</span><span class="p">.</span><span class="nx">username</span><span class="p">;</span>
+    <span class="nx">notif</span><span class="p">.</span><span class="nx">numberOfDays</span> <span class="o">=</span> <span class="nx">numberOfDays</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-16" id="section-16">&#182;</a>
+</div>
+<p>we only consider birthday within 7 days from the current day</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="nx">numberOfDays</span> <span class="o">&amp;&amp;</span> <span class="nx">numberOfDays</span> <span class="o">&lt;=</span> <span class="mi">7</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-17" id="section-17">&#182;</a>
+</div>
+<p>if today is his birthday, we create a happy birthday message</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">numberOfDays</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nx">notif</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="s1">&#39;Today is &#39;</span> <span class="o">+</span> <span class="nx">userFollowed</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s birthday.&quot;</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-18" id="section-18">&#182;</a>
+</div>
+<p>otherwise, we tell this user to go prepare gift for him</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="k">else</span> <span class="nx">notif</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">userFollowed</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;&#39;s birthday is in &quot;</span> <span class="o">+</span> <span class="nx">numberOfDays</span> <span class="o">+</span> <span class="s1">&#39; day(s). Go buy something!!!&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-19" id="section-19">&#182;</a>
+</div>
+<p>add notif to notifcations</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="nx">notifications</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">notif</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-20" id="section-20">&#182;</a>
+</div>
+<p>Sorts the notification in chronilogical order</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">notifications</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">notif1</span><span class="p">,</span> <span class="nx">notif2</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-21" id="section-21">&#182;</a>
+</div>
+<p>if notif1 represents a birthday today, return -1 because it has highest priority</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">notif1</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="s2">&quot;Today&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-22" id="section-22">&#182;</a>
+</div>
+<p>if notif2 represents a birthday today, return 1 because it has highest priority</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">notif2</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="s2">&quot;Today&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-23" id="section-23">&#182;</a>
+</div>
+<p>if both notif1 and notif2 do not represent a birthday today, simply compare the number of days their birthday are coming</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">notif1</span><span class="p">.</span><span class="nx">numberOfDays</span> <span class="o">&lt;</span> <span class="nx">notif2</span><span class="p">.</span><span class="nx">numberOfDays</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">notifications</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="support-for-creating-new-twits">
+  <h3>
+    <a href="#support-for-creating-new-twits" class="pilcrow">&#182;</a>
+    Support for creating new twits
+  </h3>
+</div>
+
+
+<p>Requires a request and a response object as parameters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">composeTwitt</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-25" id="section-25">&#182;</a>
+</div>
+<p>Checks if the user is logged in already (doesn't return if the user is not logged in)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span><span class="p">(</span><span class="nx">sessCheck</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)){</span>
+    <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">twittObj</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">twitt</span> <span class="o">=</span> <span class="nx">twittObj</span><span class="p">.</span><span class="nx">newTwitt</span><span class="p">;</span>
+    <span class="nx">userlib</span><span class="p">.</span><span class="nx">makeTwitt</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">,</span> <span class="nx">twitt</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">edittedTwittObj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">edittedTwitt</span> <span class="o">:</span> <span class="nx">twittlib</span><span class="p">.</span><span class="nx">twittToString</span><span class="p">(</span><span class="nx">userlib</span><span class="p">.</span><span class="nx">latestTwitt</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">))};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-26" id="section-26">&#182;</a>
+</div>
+<p>Set content type to be json:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">contentType</span><span class="p">(</span><span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">edittedTwittObj</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="redirects-to-the-user-s-profile-page--your-own-or-others--">
+  <h3>
+    <a href="#redirects-to-the-user-s-profile-page--your-own-or-others--" class="pilcrow">&#182;</a>
+    Redirects to the user's profile page (your own or others')
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">profile</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">){</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s2">&quot;/profilepage&quot;</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

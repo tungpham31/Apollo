@@ -1,1 +1,0 @@
-var tree={"files":["birthday_page.js","chat_page.js","discover_page.js","hangout_page.js","home_page.js","home_redirect.js","index.js","profile_page.js","registry_page.js","search_page.js","topic_page.js","user_sessions.js"]};
