@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= title%></title>
+	<!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+	<style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	</head>
+	<body>
+
+  	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Twittim</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+		
+		<h1>Twittim Registration</h1>
+				<h3> Username: <%=username%> </h3>
+				<div class="row">
+					<div class="span6">
+						<div class="well sidebar-nav">
+				<form onsubmit="" action="/user/complete_registry" method="post">
+					<div><%= message %></div><br>
+					<table>
+					<tr><td>Enter Password:</td><td><input type="password" id="loginPass" name="loginPass"></td></tr>
+					<tr><td>Re-Enter Password:</td><td><input type="password" id="loginPass2" name="loginPass2"></td><tr>
+					<tr><td>Full Name:</td><td><input type="fullname" id="fullname" name="fullname" value=<%=fullname%>></td></tr>
+					<tr><td>Occupation:</td><td><input type="job" id="job" name="job" value=<%=job%>></td></tr>
+					<tr><td>Date of Birth:</td><td><input type="dob" placeholder:"MM/DD/YYYY" id="dob" name="dob" value=<%=dob%>></td></tr>
+					<tr><td>Country:</td><td><input type="country" id="country" name="country" value=<%=country%>></td></tr>
+					</table>
+					<button class="btn">Create Profile!</button>
+    
+				</form>
+			</div>
+			</div>
+		</div>
+				<br>
+				<br>
+				<form onsubmit="" action="/login" method="get">
+				<button class="btn">Back to login</button>
+				</form>
+
+		
+	    <script src="stylesheets/bootstrap/js/bootstrap.js"></script>
+
+    <script src="stylesheets/bootstrap/js/bootstrap-responsive.js"></script>
+	</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= title%></title>
+	<!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+	<style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	
+	<script type="text/javascript" src="/socket.io/socket.io.js">
+	</script>
+	<script type="text/javascript" src="javascripts/jquery-1.8.2.min.js">
+	</script>
+	
+	<script type="text/javascript">
+	var socket = io.connect();
+	
+	//### When the client has successfully connected to the server
+	socket.on('connect', function () {
+		//join the "login" room. Emits a JSON object.
+		socket.emit('join', {"room" : "login"}); 
+		
+		//register event for receiving newly-signed up users.
+		socket.on('newUser', function(data){
+		var theUser = data.userName;
+		var li = "<li>'" + theUser + "'" + " just joined Twittim. Log in, search for him and check him out!" + '</li>';
+   		$('ul#notification').append(li);
+		});
+		
+		//bind the click event to the "register" button on the login page.
+		$('#registerSubmitButton').bind('click', function (e) {
+			//emit 'addUser' to the server, which will broadcast the user to all clients in the room. Emits a JSON object.
+        	socket.emit('addUser', {"userName" : $('#registeredUsername').val()});
+			//actually submit the form
+			$('#registerSubmitButton').submit();
+        	return true;
+   		 });
+	});
+	</script>
+	
+	</head>
+	<body>
+
+  	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Twittim</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+            	<li>
+            	<font color="#ffffff"><h5>Login:<h5></font>
+            </li>
+              <form class="navbar-form pull-right" onsubmit="" action="/user/auth" method="post">
+					<input placeholder="Username" class="span3" type="text" id="loginUsername" name="loginUsername">
+					<input placeholder="Password" class="span3" type="password" id="loginPass" name="loginPass">
+					<!--Remember Login Info? <input type="checkbox" id="loginTickRemember" name="loginTickRemember">-->
+					<input class="btn" type="submit" id="loginSubmitButton" name="loginSubmitButton" value="Log in">
+				</form>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+		<h1><%= title%> <% if (message.length > 0) { %> - <%= message%> <% } %></h1><br> 
+		<div class="row">
+			<div class="well sidebar-nav">
+			<h3>New User?</h3>
+			<form onsubmit="" action="/user/register" target="_blank" method="post">
+				Desired Username: <input type="text" id="registeredUsername" name="registeredUsername"> 
+				<input type="submit" id="registerSubmitButton" name="registerSubmitButton" value="Register"><br>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="well sidebar-nav">
+		<h3>Notifications:</h3>
+		<ul id = "notification" class="nav">
+		</ul>
+	</div>
+</div>
+		</div>
+		
+	    <script src="stylesheets/bootstrap/js/bootstrap.js"></script>
+
+    <script src="stylesheets/bootstrap/js/bootstrap-responsive.js"></script>
+	</body>
+</html>

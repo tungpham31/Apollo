@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>search_page.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "", thisFile = "C:\\Users\\Ant\\Documents\\GitHub\\TeamBrettonWoods\\Project\\\\search_page.js", defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h3">
+        <a href="#import-libraries">Import libraries</a>
+      </div>
+      <div class="heading h3">
+        <a href="#display-the-search-result-page">Display the Search Result Page</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>search_page.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="import-libraries">
+  <h3>
+    <a href="#import-libraries" class="pilcrow">&#182;</a>
+    Import libraries
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">userlib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">user_sessions</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./user_sessions&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">topiclib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib/topic&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="display-the-search-result-page">
+  <h3>
+    <a href="#display-the-search-result-page" class="pilcrow">&#182;</a>
+    Display the Search Result Page
+  </h3>
+</div>
+
+
+<div class="dox">
+  <div class="summary"><p>Three things will be included in this page
+1: The navigation button to Home and Profile, and Logout
+2: The Users Who Are Related To The Keyword
+3: The Topics Containing The Keyword    </p>
+  </div>
+  <div class="body">
+  </div>
+</div>
+
+<p>Requires a request and a responce object as parameters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">displayPage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>Checks if the user is logged in already</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="kd">var</span> <span class="nx">user</span>  <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">user</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">||</span> <span class="o">!</span><span class="nx">user_sessions</span><span class="p">.</span><span class="nx">isUserOnline</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">)){</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="s1">&#39;Not logged in!&#39;</span><span class="p">);</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>Gets the keyword from the request's body</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="kd">var</span> <span class="nx">originalKeyword</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">keyword</span><span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">keyword</span> <span class="o">=</span> <span class="nx">originalKeyword</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>Edit keyword in the correct form</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">keyword</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;@&#39;</span> <span class="o">||</span> <span class="nx">keyword</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="nx">keyword</span> <span class="o">=</span> <span class="nx">originalKeyword</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">from</span> <span class="o">!==</span> <span class="s2">&quot;instant search&quot;</span><span class="p">){</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Searches the user database for this particular keyword</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">result</span> <span class="o">=</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">searchUsersWithKeyword</span><span class="p">(</span><span class="nx">keyword</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>Searches the topic database for this particular keyword</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">result2</span> <span class="o">=</span> <span class="nx">topiclib</span><span class="p">.</span><span class="nx">searchTopic</span><span class="p">(</span><span class="nx">keyword</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>Renders a Search Result view with this information</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;search_result_page&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Search Result&#39;</span><span class="p">,</span>
+                    <span class="nx">usersFound</span> <span class="o">:</span> <span class="nx">result</span><span class="p">,</span>
+                    <span class="nx">topicsFound</span> <span class="o">:</span> <span class="nx">result2</span><span class="p">,</span>
+                    <span class="nx">key</span> <span class="o">:</span> <span class="nx">originalKeyword</span> <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">else</span><span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>Search user database for this particular keyword (return usernames)</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="kd">var</span> <span class="nx">result1</span> <span class="o">=</span> <span class="nx">userlib</span><span class="p">.</span><span class="nx">searchUsernamesWithKeyword</span><span class="p">(</span><span class="nx">keyword</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">result2</span> <span class="o">=</span> <span class="nx">topiclib</span><span class="p">.</span><span class="nx">searchTopicName</span><span class="p">(</span><span class="nx">keyword</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">result1</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">result2</span><span class="p">);</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>Set content type to be json:</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">contentType</span><span class="p">(</span><span class="s1">&#39;application/json&#39;</span><span class="p">);</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">({</span><span class="nx">data</span> <span class="o">:</span> <span class="nx">result</span><span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

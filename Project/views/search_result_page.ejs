@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  <!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+  <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="stylesheets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+
+<form method="post" action="/homepage" name="homepage"></form>
+<form method="post" action="/profilepage" name="profile"></form>
+<form method="post" action="/discoverpage" name="discover"></form>
+<form method="post" action="/chatpage" name="chatpage"></form>
+<form method="post" action="/logout" name="logout"></form>
+
+</form>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" onclick="homepage.submit()">Twittim</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+			  <li><a onclick="profile.submit()">Profile</a></li>
+              <li><a onclick="discover.submit()">Discover</a></li>
+              <li><a onclick="chatpage.submit()">Broadcast</a></li>
+			  <li><a onclick="logout.submit()">Logout</a></li>
+              <form class="navbar-form pull-right" method="post" action="/search">
+                <input placeholder="Search For A User/Topic" class="span4" type="text" id="search_keyword" name="keyword">
+                <button class="btn">Search</button>
+              </form>
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <h1><%= title %></h1>
+<div class="row">
+  <div class="span6">
+    <div class="well sidebar-nav">
+    <h3>Users Who Are Related To The Keyword '<%= key %>': </h3>
+    <ul class="nav topic-list">
+    <%if (usersFound.length==0) {%>  No Users Found  <%}%>
+    <% for(var userid in usersFound) { %>
+      <li><a href= "/userview/<%= usersFound[userid].username%>"> @<%= usersFound[userid].username%></a></li>
+    <% } %>
+    </ul>
+  </div>
+</div>
+<div class="span6">
+  <div class="well sidebar-nav">
+	
+	<h3>Topics Containing The Keyword '<%= key %>': </h3>
+    <ul class="nav topic-list">
+    <%if (topicsFound.length==0) {%>  No Topics Found  <%}%>
+    <% for(var topicid in topicsFound) { %>
+      <li><a href= "/topicview/<%= topicsFound[topicid].name%>"> #<%= topicsFound[topicid].name%></a></li>
+    <% } %>
+    </ul>
+    
+    </div>
+  </div>
+</div>
+
+        <script src="stylesheets/bootstrap/js/bootstrap.js"></script>
+
+    <script src="stylesheets/bootstrap/js/bootstrap-responsive.js"></script>
+  </body>
+</html>

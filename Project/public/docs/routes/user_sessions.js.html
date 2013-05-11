@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>user_sessions.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "", thisFile = "C:\\Users\\Ant\\Documents\\GitHub\\TeamBrettonWoods\\Project\\\\user_sessions.js", defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h3">
+        <a href="#responsible-for-user-session-management--user-authentication--and-logging-users-in-out">Responsible for user session management, user authentication, and logging users in/out</a>
+      </div>
+      <div class="heading h3">
+        <a href="#fake-database-for-storing-the-users">Fake database for storing the users</a>
+      </div>
+      <div class="heading h3">
+        <a href="#login---one-of-the-few-places-sesscheck-cannot-be-placed-due-to-an-infinite-loop.">Login - one of the few places sessCheck cannot be placed due to an infinite loop.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#performs-user-authentication.">Performs user authentication.</a>
+      </div>
+      <div class="heading h3">
+        <a href="#logout">Logout</a>
+      </div>
+      <div class="heading h3">
+        <a href="#check-if-a-user-with-a-particular-userid-is-online">Check if a user with a particular userID is online</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>user_sessions.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="responsible-for-user-session-management--user-authentication--and-logging-users-in-out">
+  <h3>
+    <a href="#responsible-for-user-session-management--user-authentication--and-logging-users-in-out" class="pilcrow">&#182;</a>
+    Responsible for user session management, user authentication, and logging users in/out
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">userlib</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../lib&#39;</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="fake-database-for-storing-the-users">
+  <h3>
+    <a href="#fake-database-for-storing-the-users" class="pilcrow">&#182;</a>
+    Fake database for storing the users
+  </h3>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kd">var</span> <span class="nx">online</span> <span class="o">=</span> <span class="p">{};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="login---one-of-the-few-places-sesscheck-cannot-be-placed-due-to-an-infinite-loop.">
+  <h3>
+    <a href="#login---one-of-the-few-places-sesscheck-cannot-be-placed-due-to-an-infinite-loop." class="pilcrow">&#182;</a>
+    Login - one of the few places sessCheck cannot be placed due to an infinite loop.
+  </h3>
+</div>
+
+
+<p>Requires a request and a responce object as parameters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">displayPage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">authmessage</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">user</span>  <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">user</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">online</span><span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/homepage&#39;</span><span class="p">);</span> <span class="c1">//user already logged in, redirect to homepage</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;login_page&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">title</span> <span class="o">:</span> <span class="s1">&#39;TWITTIM LOGIN&#39;</span><span class="p">,</span>
+                              <span class="nx">message</span> <span class="o">:</span> <span class="nx">authmessage</span><span class="p">,</span>
+                  <span class="nx">resources</span><span class="o">:</span> <span class="s1">&#39;../bin&#39;</span><span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="performs-user-authentication.">
+  <h3>
+    <a href="#performs-user-authentication." class="pilcrow">&#182;</a>
+    Performs user authentication.
+  </h3>
+</div>
+
+
+<p>Redirects the user if already logged in.
+Requires a request and a response object as parameters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">auth</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">sessCheck</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span> <span class="c1">//if user already logged in, redirect to homepage</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/homepage&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span><span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">username</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">loginUsername</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">password</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">loginPass</span><span class="p">;</span>
+    <span class="nx">userlib</span><span class="p">.</span><span class="nx">lookup</span><span class="p">(</span><span class="nx">username</span><span class="p">,</span> <span class="nx">password</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">req</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="nx">user</span><span class="p">;</span>
+        <span class="nx">online</span><span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">]</span> <span class="o">=</span> <span class="nx">user</span><span class="p">;</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/homepage&#39;</span><span class="p">);</span> <span class="c1">//successful login</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="logout">
+  <h3>
+    <a href="#logout" class="pilcrow">&#182;</a>
+    Logout
+  </h3>
+</div>
+
+
+<p>Deletes the user session, removes them from "online" "database"
+Requires a request and a response object as parameters</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">logout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">sessCheck</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="nx">res</span><span class="p">)){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">online</span><span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">delete</span> <span class="nx">online</span><span class="p">[</span><span class="nx">user</span><span class="p">.</span><span class="nx">username</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">delete</span> <span class="nx">req</span><span class="p">.</span><span class="nx">session</span><span class="p">.</span><span class="nx">user</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap" id="check-if-a-user-with-a-particular-userid-is-online">
+  <h3>
+    <a href="#check-if-a-user-with-a-particular-userid-is-online" class="pilcrow">&#182;</a>
+    Check if a user with a particular userID is online
+  </h3>
+</div>
+
+
+<p>Takes a username string and returns a boolean</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">isUserOnline</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">){</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">username</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">){</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">online</span><span class="p">[</span><span class="nx">username</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">){</span>
+    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

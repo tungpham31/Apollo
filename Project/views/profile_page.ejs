@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+	<!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+	<style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="stylesheets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+<form method="post" action="/homepage" name="homepage"></form>
+<form method="post" action="/profilepage" name="profile"></form>
+<form method="post" action="/discoverpage" name="discover"></form>
+<form method="post" action="/chatpage" name="chatpage"></form>
+<form method="post" action="/logout" name="logout"></form>
+<form method="post" action="/hangoutpage" name="hangout">
+  <input type="hidden" name="broadcasterUsername" value="<%=user.username%>">
+</form>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" onclick="homepage.submit()">Twittim</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+			  <li><a onclick="profile.submit()">Profile</a></li>
+              <li><a onclick="discover.submit()">Discover</a></li>
+              <li><a onclick="chatpage.submit()">Broadcast</a></li>
+			  <li><a onclick="logout.submit()">Logout</a></li>
+              <form class="navbar-form pull-right" method="post" action="/search">
+                <input placeholder="Search For A User/Topic" class="span4" type="text" id="search_keyword" name="keyword">
+                <button class="btn">Search</button>
+              </form>
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <h1><%= title %></h1>
+	<div class="row">
+    <div class="span6">
+      <div class="well sidebar-nav">
+	  <%if (ownProfile==false) {%><button onclick="hangout.submit()" class="btn">Hang Out</button>
+    <% } %>
+	    <h3><%= user.username %>'s Information:</h3>
+    <p>Username: <%= user.username %></p>
+	
+    <%if (ownProfile==true) {%>Password: <%= user.password%>
+    <% } else { %>Password: Cannot disclose. This is not your profile.<% } %>
+    <p>Name: <%= user.name %></p>
+    <p>Age: <%= user.age %></p>
+    <p>Birthday: <%= new Date(user.birthday).toLocaleDateString() %></p>
+    <p>Job: <%= user.job %></p>
+  <p>Country: <%= user.country %></p>
+    <p>Number of Followers: <%= user.numusersfollowing %></p>
+</div>
+</div>
+<div class="row">
+  <div class="span6">
+
+	<%if (ownProfile == false) {%>
+    <div class="row">
+      <div class="span6">
+        <div class="well sidebar-nav">
+	<% if(following) { %> 
+	<form method="post" action="/unfollowuser/<%=user.username%>"><button class="btn">STOP</button> following this user! </form> 
+	<% } else {%> 
+	<form method="post" action="/followuser/<%=user.username%>"><button class="btn">FOLLOW</button> this user! </form>
+	<% } %>
+</div>
+</div>
+</div>
+	<% } %>
+	
+    <div class="row">
+      <div class="span6">
+        <div class="well sidebar-nav">
+	<h3>Twitt history</h3>
+	<ul class="nav" id = "twitts">
+	
+    <%if (twitts.length==0) {%>  No twitts to be displayed here!  <%}%>
+	
+    <% for(var twittid in twitts) { %>
+	   <li> On <%= new Date(twitts[twittid].date).toLocaleDateString() + ", " +  new Date(twitts[twittid].date).toLocaleTimeString()%>: 
+	   <% var split = twitts[twittid].content.split(" ");
+	   for(var i in split) { %>
+		   <%if(split[i].indexOf("#") === 0){ %> 		
+			   <a href = "/topicview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> 
+			 <% } 
+       else { %>
+          <%if (split[i].indexOf('@') === 0){ %>
+            <a href = "/userview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> 
+          <% }
+          else { %>
+			      <%=split[i]%>
+          <% } %>
+			 <% } %>
+		 <% } %>
+	  <% } %>
+    </ul>
+  </div>
+</div>
+</div>
+        <script src="stylesheets/bootstrap/js/bootstrap.js"></script>
+
+    <script src="stylesheets/bootstrap/js/bootstrap-responsive.js"></script>
+  </body>
+</html>

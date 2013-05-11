@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Now viewing topic: <%= title %></title>
+  <!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+  <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script type="text/javascript" src="/javascripts/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="/javascripts/like_topic_ajax.js">
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="stylesheets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+  </head>
+  <body>
+<form method="post" action="/homepage" name="homepage"></form>
+<form method="post" action="/profilepage" name="profile"></form>
+<form method="post" action="/discoverpage" name="discover"></form>
+<form method="post" action="/chatpage" name="chatpage"></form>
+<form method="post" action="/logout" name="logout"></form>
+
+</form>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" onclick="homepage.submit()">Twittim</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+			  <li><a onclick="profile.submit()">Profile</a></li>
+              <li><a onclick="discover.submit()">Discover</a></li>
+              <li><a onclick="chatpage.submit()">Broadcast</a></li>
+			  <li><a onclick="logout.submit()">Logout</a></li>
+              <form class="navbar-form pull-right" method="post" action="/search">
+                <input placeholder="Search For A User/Topic" class="span4" type="text" id="search_keyword" name="keyword">
+                <button class="btn">Search</button>
+              </form>
+              
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <h1>#<%= title.toUpperCase() %></h1>
+   <div class="row">
+    <div class="span8">
+      <div class="well sidebar-nav">
+    <h3>Twitts about <%= title %></h3>
+    <ul class="nav" id="twitts">
+    <%if (twitts.length==0) {%>  There are no twitts in this topic! <%}%>
+    <% for(var twittid in twitts) { %>
+      <li><a href = "/userview/<%= twitts[twittid].poster %>"> <%= twitts[twittid].postername %></a> on <%= twitts[twittid].date.toLocaleDateString() + ", " + twitts[twittid].date.toLocaleTimeString() %>: <%= twitts[twittid].content %></li>
+    <% } %>
+    </ul>
+  </div>
+</div>
+<div class="span4">
+  <div class="well sidebar-nav">
+
+    <% if(likes) { %> 
+   You like this topic! <form method="post" action="/unliketopic/<%=title%>"><button class="btn btn-small">UNLIKE</button></form>
+  <% } else {%> 
+   You don't like this topic! <form method="post" action="/liketopic/<%=title%>"><button class="btn btn-small">LIKE!</button></form>
+  <% } %>
+
+</div>
+</div>
+</div>
+        <script src="stylesheets/bootstrap/js/bootstrap.js"></script>
+
+    <script src="stylesheets/bootstrap/js/bootstrap-responsive.js"></script>
+  </body>
+</html>

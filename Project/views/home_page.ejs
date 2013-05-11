@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= title %></title>
+    
+	<!-- Bootstrap -->
+  <link href="/stylesheets/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+	<style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+  </style>
+
+  <link rel='stylesheet' href='/stylesheets/style.css' />  
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+  <link href="/stylesheets/css/bootstrap-responsive.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="stylesheets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+  <script src="javascripts/jquery-1.9.1.min.js"></script>
+  <script src="javascripts/jquery-ui.min.js"></script>
+  <script src="javascripts/instant_search.js"></script>
+	<script type="text/javascript" src="socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="javascripts/home_page.js"></script>
+  <script type="text/javascript" src="javascripts/reply_twitt.js"></script>
+</head>
+  
+<body style="background-image:loginBackground.jpg">
+
+    <form method="post" action="/profilepage" name="profile"></form>
+    <form method="post" action="/logout" name="logout"></form>
+    <form method="post" action="/discoverpage" name="discover"></form>
+	<form method="post" action="/chatpage" name="chatpage"></form>
+	
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <!--<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>-->
+          <a class="brand" href="">Twittim</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a onclick="profile.submit()">Profile</a></li>
+              <li><a onclick="discover.submit()">Discover</a></li>
+              <li><a onclick="chatpage.submit()">Broadcast</a></li>
+			        <li><a onclick="logout.submit()">Logout</a></li>
+              <form class="navbar-form pull-right" method="post" action="/search">
+                <input placeholder="Search For A User/Topic" class="span4" type="text" id="search_keyword" name="keyword">
+                <button class="btn">Search</button>
+              </form>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title%></p>
+	
+	<h4>You currently have <%= numusersfollowing %> follower(s)!</h4>
+<div class="row">
+  <div class="span12">
+<div class="row">
+  <div class="span12">
+    <div class="well sidebar-nav">
+	  <form>
+      <input placeholder="Let's Compose An Awesome Twitt" class="span11" id="twitt_input" type="text" name="twitt"> <br/>
+  		<button id="compose_twitt_button" class="btn">Compose</button>
+	  </form>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div class="span6">
+<div class="row">
+  <div class="span6">
+  <div class="well sidebar-nav">
+    <ul id = "twitts" class="nav">
+    <%if (twitts.length==0) {%>  You have no Twitts, compose one!  <%}%>
+
+    <% for(var twittid in twitts) { %>
+      <li>On <%= twitts[twittid].date.toLocaleDateString() + ", " + twitts[twittid].date.toLocaleTimeString() %>, you twitted: 
+	    <% var split = twitts[twittid].content.split(" ");
+	    for(var i in split) { %>
+		    <%if(split[i].indexOf("#") === 0){ %> 		
+			   <a href = "/topicview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> 
+			  <% } 
+        else { %>
+			   <%if (split[i].indexOf('@') === 0){%><a href = "/userview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> <%}
+         else { %> <%=split[i]%> <% } %>
+			  <% } %>
+		  <% } %>
+	    </li>
+    <% } %>
+
+    </ul>
+  </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span6">
+	<div class="well sidebar-nav">
+	<h3>Topics You're Following</h3>
+	<ul id = "topics" class="nav">
+        <%if (topics.length==0) {%>  You aren't following any topics!  <%}%>
+
+    <% for(var topicid in topics) { %>
+      <h4> On topic: <a href = "/topicview/<%= topics[topicid].name %>"> #<%= topics[topicid].name %> </a></h4>
+      <% for(var twittid in topictwitts[topicid]) { %>
+        <li> <a href = "/userview/<%= topictwitts[topicid][twittid].poster %>"> <%= topictwitts[topicid][twittid].postername %></a> on <%= topictwitts[topicid][twittid].date.toLocaleDateString() + ", " + topictwitts[topicid][twittid].date.toLocaleTimeString() %>:
+
+        <% var split = topictwitts[topicid][twittid].content.split(" ");
+        for(var i in split) { %>
+          <%if(split[i].indexOf("#") === 0){ %>     
+            <a href = "/topicview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> 
+          <% } 
+          else { %>
+            <%if (split[i].indexOf('@') === 0){%><a href = "/userview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> <%}
+            else { %> <%=split[i]%> <% } %>
+          <% } %>
+        <% } %>
+
+        <% if (topictwitts[topicid][twittid].poster !== currentUser.username){ %>
+          <br><button id="reply_twitt_button" username=<%= topictwitts[topicid][twittid].poster %> class="btn btn-small">Reply</button>
+        <% } %>
+        </li>
+      <% } %>
+    <% } %>
+  </ul>
+</div>
+</div>
+</div>
+</div>
+<div class="span6">
+  <div class="row">
+    <div class="span6">
+    <div class="well sidebar-nav">
+	<h3>Latest Twitts By Your Favourite People</h3>
+	<ul id = "usertwitts" class="nav">
+       <%if (usertwitts.length==0) {%>  You aren't following any users!  <%}%>
+  <% for(var usertwittid in usertwitts) { %>
+    <li> <a href = "/userview/<%= usertwitts[usertwittid].poster %>"> <%= usertwitts[usertwittid].postername %></a> on <%= usertwitts[usertwittid].date.toLocaleDateString() + ", " + usertwitts[usertwittid].date.toLocaleTimeString() %>: 
+
+    <% var split = usertwitts[usertwittid].content.split(" ");
+    for(var i in split) { %>
+      <%if(split[i].indexOf("#") === 0){ %>     
+       <a href = "/topicview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> 
+      <% } 
+      else { %>
+        <%if (split[i].indexOf('@') === 0){ %>
+          <a href = "/userview/<%= split[i].slice(1, split[i].length).toLowerCase() %>"><%=split[i]%></a> 
+        <% }
+       else { %> <%=split[i]%>
+       <% } %>
+      <% } %>
+    <% } %>
+
+    <% if (usertwitts[usertwittid].poster !== currentUser.username){ %>
+      <button href="#" id="reply_twitt_button" username=<%= usertwitts[usertwittid].poster %> class="btn btn-small">Reply</button>
+    <% } %>
+    </li>
+  <% } %>
+    </ul>
+</div>
+</div>
+</div>
+<div class="row">
+  <div class="span6">
+  <div class="well sidebar-nav">
+    <%if (isBirthdayToday) {%> <h3>Today Is Your Birthday. Happy Birthday!!!!</h3> 
+    <a href = <%= "/topicview/happybirthdayto_" + currentUser.username.toLowerCase() %> > See Birthday Wishes From Your Followers </a> 
+    <%}%>
+	
+    <h3>Upcoming Birthdays of People You're Following</h3>
+    <ul class="nav">
+    <%if (birthdayNotifications.length==0) {%>  No Upcoming Birthday  <%}%>
+    <% for(var i in birthdayNotifications) { %>
+      <li> 
+        <%if (birthdayNotifications[i].message.search('Today') == -1) {%>  <%= birthdayNotifications[i].message %>  <%}
+        else { %> <%= birthdayNotifications[i].message %>  <a href = "/birthdayPage/<%= birthdayNotifications[i].username %>" > Say Happy Birthday</a> <% } %>
+      </li>
+    <% } %>
+    </ul>
+	</div>
+</div>
+</div>
+</div>
+</div>
+    <script src="stylesheets/bootstrap/js/bootstrap.js"></script>
+
+    <!--<script src="stylesheets/bootstrap/js/bootstrap-responsive.js"></script>-->
+  </body>
+</html>
