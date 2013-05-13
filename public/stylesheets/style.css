@@ -1,69 +1,8 @@
-.navbar-inverse .navbar-inner{
- }
-
-.navbar-inverse .brand,
-.navbar-inverse .nav > li > a {
-    color:#dddddd;
-    display: block;
-}
-
-.navbar-inverse .brand:hover,
-.navbar-inverse .brand:focus,
-.navbar-inverse .nav > li > a:hover,
-.navbar-inverse .nav > li > a:focus {
-    color:#222222;
-    display: block;
-    text-decoration: none;
-    background-color: #eeeeee;
-}
-
-.nav-list > li > a,
-.nav-list .nav-header {
-  margin-right: -15px;
-  margin-left: -15px;
-  text-shadow: 0 0px 0 rgba(0, 0, 0, 0);
-}
-
-.nav > li > a:hover,
-.nav > li > a:focus {
-  text-decoration: none;
-  background-color: #ffffff;
-}
-
-.nav > li > a {
-  display: inline;
-}
-
-.sidebar-nav {
-  background-color: #1b1b1b;
-  background-image: -moz-linear-gradient(top, #222222, #111111);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#222222), to(#111111));
-  background-image: -webkit-linear-gradient(top, #222222, #111111);
-  background-image: -o-linear-gradient(top, #222222, #111111);
-  background-image: linear-gradient(to bottom, #222222, #111111);
-  background-repeat: repeat-x;
-  border-color: #252525;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222', endColorstr='#ff111111', GradientType=0);
-}
-
 body {
-  color: #777777;
-  background: rgb(9,9,9); /* Old browsers */
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #dddddd;
-  text-decoration: none;
-}
-
-.topic-list > li > a {
-  display: block;
-}
-
-a:hover,
-a:focus {
-  text-decoration: none;
-  background-color: #eeeeee;
+  color: #00B7FF;
 }
