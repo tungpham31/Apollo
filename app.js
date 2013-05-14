@@ -31,6 +31,9 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+app.get('/channel.html', function(req, res) {
+	res.sendfile('./public/channel.html');
+});
 
 //###The correct way to host an HTTP server using an Express instance
 var httpServer = http.createServer(app);
