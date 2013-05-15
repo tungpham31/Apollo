@@ -16,7 +16,6 @@ var isStarted = false;
 // The videoId of the current playing video
 var currentVideoId = 'M7lc1UVf-VE';
 function onYouTubePlayerAPIReady() {
-	console.log("Im here");
 	player = new YT.Player('ytplayer', {
 		height: '390',
 		width: '640',
