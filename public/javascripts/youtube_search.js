@@ -4,9 +4,8 @@ $(document).ready(function() {
  	$('#search_form').submit(function(event){
  		event.preventDefault();
 		// Search for a given string.
-		console.log("In Search");
-		console.log($('#search_input').val());
 		var q = $('#search_input').val();
+		$('#search_input').val("");
 		var request = gapi.client.youtube.search.list({
 			q: q,
 			part: 'snippet',
@@ -16,8 +15,7 @@ $(document).ready(function() {
 		request.execute(function(response) {
 		var str = JSON.stringify(response.result);
 		var videoId = response.result.items[0].id.videoId;
-		setTimeout(function(){player.loadVideoById(videoId, 0, "default");}, 2000);
-		console.log("result = " + str);
+		player.loadVideoById(videoId, 0, "default");
 		});
 	});
 });
