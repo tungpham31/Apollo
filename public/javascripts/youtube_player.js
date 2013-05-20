@@ -1,123 +1,39 @@
-socket = io.connect();
-//### When the client has successfully connected to the server
-socket.on('connect', function () {
-	// Load the IFrame Player API code asynchronously.
-	var tag = document.createElement('script');
-	tag.src = "https://www.youtube.com/player_api";
-	var firstScriptTag = document.getElementsByTagName('script')[0];
-	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-});
+// 2. This code loads the IFrame Player API code asynchronously.
+var tag = document.createElement('script');
 
-// Replace the 'ytplayer' element with an <iframe> and
-// YouTube player after the API code downloads.
-var player = undefined;
-// A variable determine whether this user has started streaming video for the first time
-var isStarted = false;
-// The videoId of the current playing video
-var currentVideoId = 'M7lc1UVf-VE';
-function onYouTubePlayerAPIReady() {
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// 3. This function creates an <iframe> (and YouTube player)
+//    after the API code downloads.
+var player;
+function onYouTubeIframeAPIReady() {
 	player = new YT.Player('ytplayer', {
-		height: '390',
-		width: '640',
-		videoId: 'M7lc1UVf-VE',
-		events: {
-			'onStateChange': onPlayerStateChange
-		}
+	  height: '390',
+	  width: '640',
+	  events: {
+	    'onReady': onPlayerReady,
+	    'onStateChange': onPlayerStateChange
+	  }
 	});
+}
 
-	//Call to polling. 
-	//polling();
+// 4. The API will call this function when the video player is ready.
+function onPlayerReady(event) {
+}
 
-	//Register event for receiving state changes of youtube player from server.
-	socket.on('youtube_player_state_change', function(data){
-		var theMessage = data.message;
-		if (theMessage === "PAUSED") pausePlayer();
-		if (theMessage === "PLAYING") playPlayer();
-	});
-
-	//Called when a new video is added by the broadcaster.
-	socket.on('add_new_video_to_youtube_player', function(data){
-		var url = data.url;
-		playVideoWithUrl(url);
-	});
-
-	//Called when receive an update from server
-	socket.on('update_youtube_player_state', function(data){
-		var videoId = data.videoId;
-		var currentTime = data.currentTime;
-		var playerState = data.playerState;
-		if (!isStarted && player !== undefined){
-			isStarted = true;
-			currentVideoId = videoId;
-			console.log("client get update from server " + videoId + " " + currentTime + " " + playerState + " " + player + " " + isStarted);
-			if (playerState === YT.PlayerState.PLAYING)
-				player.loadVideoById(videoId, currentTime, "medium");
-			else{
-				player.loadVideoById(videoId, currentTime, "medium");
-				pausePlayer();
-			}
-		} 
-	});
-
-	function onPlayerStateChange(event) {
-		if (event.data == YT.PlayerState.PAUSED){
-			socket.emit('youtube_player_state_change', {"message" : "PAUSED"});
-		}
-		if (event.data == YT.PlayerState.PLAYING){
-			socket.emit('youtube_player_state_change', {"message" : "PLAYING"});
-		}
-	}
-
-	// Listen to the event a new video is added in client side
-	/*$('#add_video_button').bind('click', function (e) {
-		var url = $('#new_video').val();
-		socket.emit('add_new_video_to_youtube_player', {"url" : url});
-		return false;
-	});*/
-
-	// Polling, update video state so that everyone is one the same place
-	function polling(){
-		setInterval(function(){
-			// if this is the broadcaster then send the its current video state
-			if ($("#ytplayer").attr("userName") != undefined && player != undefined){
-				socket.emit('update_youtube_player_state', {"videoId" : currentVideoId, "current_time" : player.getCurrentTime(), 
-					"player_state" : player.getPlayerState(), "username" : $("#ytplayer").attr("userName") });
-			}
-		}, 2000);
-	};
-
-	function pausePlayer(){
-		if (player !== undefined){
-			player.stopVideo();
-		}
-	}
-
-	function playPlayer(){
-		if (player !== undefined){
-			isStarted = true;
-			player.playVideo();
-		}
-	}
-
-	// Send the function the youtube url, it will
-	// play the video accordingly
-	function playVideoWithUrl(url){
-		if (url.indexOf("http://www.youtube.com/watch?v") ==! -1){
-			// if the url seems to be in youtube url form
-			// try to get the video id
-			var top = url.indexOf("v=");
-			top += 2;
-			if (top + 11 <= url.length){
-				// if the video id ca be extracted from the url
-				var videoId = url.substring(top, top + 11);
-				currentVideoId = videoId;
-				player.loadVideoById(videoId, 0, "medium");
-				return;
-			}
-		}
-
-		// If the url is not valid, loadVideoByUrl so that youtube can handle it
-		player.loadVideoByUrl(url, 0, "medium");
+function notifyPlayerAboutNewSong(){
+	console.log("In notifyPlayerAboutNewSong");
+	// If player state is either unstarted or ended
+	if (player.getPlayerState() === -1 || player.getPlayerState() === 0){
+		player.loadVideoById(nextSong(), 0, "default");
 	}
 }
 
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+    	nextSongId = nextSong();
+    	if (nextSongId !== -1) player.loadVideoById(nextSongId, 0, "default");
+    }
+}

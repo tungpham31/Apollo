@@ -15,7 +15,7 @@ $(document).ready(function() {
 		request.execute(function(response) {
 		var str = JSON.stringify(response.result);
 		var videoId = response.result.items[0].id.videoId;
-		player.loadVideoById(videoId, 0, "default");
+		addSongById(videoId);
 		});
 	});
 });
