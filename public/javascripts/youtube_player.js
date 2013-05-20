@@ -34,6 +34,6 @@ function notifyPlayerAboutNewSong(){
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
     	nextSongId = nextSong();
-    	if (nextSongId !== -1) player.loadVideoById(nextSongId, 0, "default");
+    	if (nextSongId !== "-1") player.loadVideoById(nextSongId, 0, "default");
     }
 }
