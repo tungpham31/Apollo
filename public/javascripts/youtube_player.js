@@ -33,7 +33,26 @@ function notifyPlayerAboutNewSong(){
 
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
-    	nextSongId = nextSong();
-    	if (nextSongId !== "-1") player.loadVideoById(nextSongId, 0, "default");
+    	playNext();
     }
+}
+
+$(document).ready(function(){
+	$('#next_button').click(function(event){
+		playNext();
+	});
+
+	$('#previous_button').click(function(event){
+		playPrevious();
+	});
+})
+
+function playNext(){
+	nextSongId = nextSong();
+    if (nextSongId !== "-1") player.loadVideoById(nextSongId, 0, "default");
+}
+
+function playPrevious(){
+	previousSongId = previousSong();
+    if (previousSongId !== "-1") player.loadVideoById(previousSongId, 0, "default");
 }
