@@ -33,7 +33,8 @@ function notifyPlayerAboutNewSong(){
 
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.ENDED) {
-    	playNext();
+    	if ($('#repeat_button').attr("status") === "0") playNext()
+    	else playCurrent();
     }
 }
 
@@ -45,6 +46,19 @@ $(document).ready(function(){
 	$('#previous_button').click(function(event){
 		playPrevious();
 	});
+
+	$('#repeat_button').click(function(event){
+		if ($('#repeat_button').attr("status") === "0"){
+			// If value is 0, means that it is not repeated, change to repeat mode.
+			$('#repeat_button').attr("status", "1");
+			$('#repeat_button').html('Stop Repeat');
+		}
+		else{
+			// If value is 1, means that it is repeated, change to not-repeat mode.
+			$('#repeat_button').attr("status", "0");
+			$('#repeat_button').html('Repeat');
+		}
+	});
 })
 
 function playNext(){
@@ -55,4 +69,9 @@ function playNext(){
 function playPrevious(){
 	previousSongId = previousSong();
     if (previousSongId !== "-1") player.loadVideoById(previousSongId, 0, "default");
+}
+
+function playCurrent(){
+	currentSongId = currentSong();
+	if (currentSongId !== "-1") player.loadVideoById(currentSongId, 0, "default");
 }

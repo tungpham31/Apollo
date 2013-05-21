@@ -29,3 +29,10 @@ function previousSong(){
 	addToTopThumbnails(playlist[first]);
 	return result;
 }
+
+// Return the id of the current song playing
+function currentSong(){
+	if (first === 0) return "-1";
+
+	return playlist[first - 1];
+}
