@@ -25,6 +25,8 @@ function onPlayerReady(event) {
 
 function notifyPlayerAboutNewSong(){
 	console.log("In notifyPlayerAboutNewSong");
+
+	if (first > last) return;
 	// If player state is either unstarted or ended
 	if (player.getPlayerState() === -1 || player.getPlayerState() === 0){
 		player.loadVideoById(nextSong(), 0, "default");
@@ -40,7 +42,7 @@ function onPlayerStateChange(event) {
 
 $(document).ready(function(){
 	$('#next_button').click(function(event){
-		playNext();
+		player.seekTo(player.getDuration(), true);
 	});
 
 	$('#previous_button').click(function(event){

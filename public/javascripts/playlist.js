@@ -14,7 +14,11 @@ function addSongById(videoId){
 // Get the next song in the playlist (by id)
 // If there is no next song return -1
 function nextSong(){
-	if (first > last) return "-1";
+	if (first > last){
+		// If there is no song left in playlist, request a recommended song from engine.
+		getRecommendedSong();
+		return "-1";
+	};
 	deleteFirstThumbnail();
 	var result = playlist[first];
 	first++;
@@ -36,3 +40,24 @@ function currentSong(){
 
 	return playlist[first - 1];
 }
+
+// Search for a song with a particular title then add it to playlist.
+function addSongByTitleAndArtist(title, artist){
+	var request = gapi.client.youtube.search.list({
+		q: title + " " + artist,
+		part: 'snippet',
+		maxResults: '1'
+	});
+
+	request.execute(function(response) {
+	var str = JSON.stringify(response.result);
+	var videoId = response.result.items[0].id.videoId;
+	addSongById(videoId);
+	});
+}
+
+// Determine whether there are more songs currently available in playlist
+function hasNextSong(){
+	if (first > last) return false;
+	return true;
+} 
