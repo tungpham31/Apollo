@@ -28,9 +28,8 @@ function notifyPlayerAboutNewSong(){
 
 	if (first > last) return;
 	// If player state is either unstarted or ended
-	if (player.getPlayerState() === -1 || player.getPlayerState() === 0){
-		player.loadVideoById(nextSong(), 0, "default");
-	}
+	if (player.getPlayerState() === -1 || player.getPlayerState() === 0)
+		playNext();
 }
 
 function onPlayerStateChange(event) {
@@ -61,11 +60,29 @@ $(document).ready(function(){
 			$('#repeat_button').html('Repeat');
 		}
 	});
+
+	$('#like_button').click(function(event){
+		if ($('#like_button').attr("value") === "unliked"){
+			$('#like_button').attr("value", "liked");
+			$('#like_button').html("Unlike");
+			likeSong();
+		}
+		else{
+			$('#like_button').attr("value", "unliked");
+			$('#like_button').html("Like");
+		}
+	});
 })
 
 function playNext(){
 	nextSongId = nextSong();
-    if (nextSongId !== "-1") player.loadVideoById(nextSongId, 0, "default");
+    if (nextSongId !== "-1"){
+		player.loadVideoById(nextSongId, 0, "default");
+		// Reset like button
+		console.log("In Play Next");
+		$('#like_button').attr("value", "unliked");
+		$('#like_button').html("Like");
+	}
 }
 
 function playPrevious(){

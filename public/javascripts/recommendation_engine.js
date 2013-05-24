@@ -1,14 +1,17 @@
 var echo_nest_api_key = "7VI2RLSXC4GBPF6S7";
-var create_radio_request = "http://developer.echonest.com/api/v4/playlist/dynamic/create?api_key=7VI2RLSXC4GBPF6S7&type=catalog-radio&seed_catalog=CAABOUD13216257FC7&adventurousness=.9";
+var create_radio_request = "http://developer.echonest.com/api/v4/playlist/dynamic/create?api_key=7VI2RLSXC4GBPF6S7&type=catalog-radio&seed_catalog=CACAJLI13ED4A7FB2C&adventurousness=.9";
 var next_song_request = "http://developer.echonest.com/api/v4/playlist/dynamic/next?api_key=" + echo_nest_api_key + "&format=json&session_id="
-var session_id = undefined;
+var favorite_song_request = "http://developer.echonest.com/api/v4/playlist/dynamic/feedback?api_key=7VI2RLSXC4GBPF6S7&format=json&session_id=236a7f3a9aaa46e48449708184b87b0f&favorite_song=last";
+var session_id = "236a7f3a9aaa46e48449708184b87b0f";
+var lastRecommendedSong = undefined;
+var lastRecommendedSongPositionInPlaylist = undefined;
 
 createRadio();
 // Create dynamic playlist and get session_id for playlist.
 function createRadio(){
 	$.getJSON(create_radio_request + "&_=" + Math.floor(Math.random()*1000000), function(data) {
 		if (data.response.status.message === "Success"){
-			session_id = data.response.session_id;
+			//session_id = data.response.session_id;
 			next_song_request = next_song_request + session_id;
 		}
 	});
@@ -19,10 +22,22 @@ function getRecommendedSong(){
 	if (session_id !== undefined){
 		$.getJSON(next_song_request + "&_=" + Math.floor(Math.random()*1000000), function(data) {
 			if (data.response.status.message === "Success"){
-				var song = data.response.songs[0];
-				console.log(song.artist_name + " " +  song.title);
-				addSongByTitleAndArtist(song.title, song.artist_name);
+				var lastRecommendedSong = data.response.songs[0];
+				console.log(session_id);
+				console.log(data);
+				console.log(lastRecommendedSong.artist_name + " " +  lastRecommendedSong.title);
+				addSongByTitleAndArtist(lastRecommendedSong.title, lastRecommendedSong.artist_name);
 			}
 		});
 	}
+}
+
+// Send feedback back to Echonest indicating that user like a song.
+function likeSong(){
+	$.getJSON(favorite_song_request + "&_=" + Math.floor(Math.random()*1000000), function(data) {
+		if (data.response.status.message === "Success"){
+			console.log("Like successufully");
+			console.log(data);
+		}
+	});
 }

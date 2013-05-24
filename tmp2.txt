@@ -1,0 +1,1 @@
+curl -X POST "http://developer.echonest.com/api/v4/catalog/update" -F "api_key=7VI2RLSXC4GBPF6S7" -F "data_type=json" -F "format=json" -F "id=CACAJLI13ED4A7FB2C" -F "data=@data_file.json"
