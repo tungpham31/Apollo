@@ -72,6 +72,11 @@ $(document).ready(function(){
 			$('#like_button').html("Like");
 		}
 	});
+
+	$('#dislike_button').click(function(event){
+		dislikeSong();
+		player.seekTo(player.getDuration(), true);
+	});
 })
 
 function playNext(){
@@ -79,7 +84,6 @@ function playNext(){
     if (nextSongId !== "-1"){
 		player.loadVideoById(nextSongId, 0, "default");
 		// Reset like button
-		console.log("In Play Next");
 		$('#like_button').attr("value", "unliked");
 		$('#like_button').html("Like");
 	}
@@ -87,7 +91,12 @@ function playNext(){
 
 function playPrevious(){
 	previousSongId = previousSong();
-    if (previousSongId !== "-1") player.loadVideoById(previousSongId, 0, "default");
+    if (previousSongId !== "-1"){
+    	player.loadVideoById(previousSongId, 0, "default");
+    	// Reset like button
+		$('#like_button').attr("value", "unliked");
+		$('#like_button').html("Like");
+    }
 }
 
 function playCurrent(){
