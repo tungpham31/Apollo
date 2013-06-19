@@ -2,16 +2,23 @@
 <html>
 <head>
 	<title><%= title %></title>
-  <script src="javascripts/jquery-1.9.1.min.js"></script>
-  <script src="javascripts/jquery-ui.min.js"></script>
+	<script src="javascripts/jquery-1.9.1.min.js"></script>
+	<script src="javascripts/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="socket.io/socket.io.js"></script>
 	<link rel='stylesheet' href='/stylesheets/style.css' />
 	<script src="javascripts/youtube_player.js"></script>
-  <script src="javascripts/youtube_search.js"></script>
-  <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
-  <script src="javascripts/playlist.js"></script>
-  <script src="javascripts/thumbnail.js"></script>
-  <script src="javascripts/recommendation_engine.js"></script>
+	<script src="javascripts/youtube_search.js"></script>
+	<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+	<script src="javascripts/playlist.js"></script>
+	<script src="javascripts/thumbnail.js"></script>
+	<script src="javascripts/recommendation_engine.js"></script>
+
+	// Test metadata.
+	<meta property="fb:app_id" content="512087902184325" />
+	<meta property="og:title" content="I'm yours" />
+	<meta property="og:image" content="https://s-static.ak.fbcdn.net/images/devsite/attachment_blank.png" />
+	<meta property="og:url" content="http://localhost:3000" />
+	<meta property="og:type" content="music.song" />
 </head>
 <body>
 	<div id="fb-root"></div>
@@ -23,7 +30,7 @@
     status     : true, // check login status
     cookie     : true, // enable cookies to allow the server to access the session
     xfbml      : true  // parse XFBML
-});
+  });
 
   // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
   // for any auth related change, such as login, logout or session refresh. This means that
@@ -32,11 +39,12 @@
   FB.Event.subscribe('auth.authResponseChange', function(response) {
     // Here we specify what we do with the response anytime this event occurs. 
     if (response.status === 'connected') {
+    	console.log("In facebook connected");
       // The response object is returned with a status field that lets the app know the current
       // login status of the person. In this case, we're handling the situation where they 
       // have logged in to the app.
       testAPI();
-  } else if (response.status === 'not_authorized') {
+    } else if (response.status === 'not_authorized') {
       // In this case, the person is logged into Facebook, but not into the app, so we call
       // FB.login() to prompt them to do so. 
       // In real-life usage, you wouldn't want to immediately prompt someone to login 
@@ -44,16 +52,16 @@
       // (1) JavaScript created popup windows are blocked by most browsers unless they 
       // result from direct user interaction (such as a mouse click)
       // (2) it is a bad experience to be continually prompted to login upon page load.
-      FB.login();
-  } else {
+      FB.login(function(response){console.log(response);}, {scope: 'publish_actions'});
+    } else {
       // In this case, the person is not logged into Facebook, so we call the login() 
       // function to prompt them to do so. Note that at this stage there is no indication
       // of whether they are logged into the app. If they aren't then they'll see the Login
       // dialog right after they log in to Facebook. 
       // The same caveats as above apply to the FB.login() call here.
-      FB.login();
-  }
-});
+      FB.login(function(response){console.log(response);}, {scope: 'publish_actions'});
+    }
+  });
 };
 
   // Load the SDK asynchronously
@@ -68,20 +76,33 @@
   // Here we run a very simple test of the Graph API after login is successful. 
   // This testAPI() function is only called in those cases. 
   function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
+  	console.log('Welcome!  Fetching your information.... ');
   	FB.api('/me', function(response) {
   		console.log('Good to see you, ' + response.name + '.');
   	});
+  	var accessToken = FB.getAuthResponse().accessToken;
+  	console.log(accessToken);
+  	FB.api(
+  		'me/music.listens',
+  		'post',
+  		{
+  			song: "http://open.spotify.com/track/2aSFLiDPreOVP6KHiWk4lF"
+  		},
+  		function(response) {
+    	// handle the response
+    	console.log(response);
+    }
+    );
   }
   </script>
   <!--Below we include the Login Button social plugin. This button uses the JavaScript SDK to-->
   <!--present a graphical Login button that triggers the FB.login() function when clicked.-->
-  <fb:login-button show-faces="true" width="200" max-rows="1" autologoutlink="true" size="large"></fb:login-button>
+  <fb:login-button show-faces="true" width="200" max-rows="1" autologoutlink="true" size="large" perms="publish_actions"></fb:login-button>
 
   <h1><%= title %></h1>
   <p>Welcome to <%= title %></p>
   <form id="search_form">
-    <input id="search_input" type="text"> Add Song
+  	<input id="search_input" type="text"> Add Song
   </form>
   <div id="ytplayer"></div></br>
 
