@@ -25,7 +25,7 @@ function getRecommendedSong(){
 				console.log(session_id);
 				console.log(data);
 				console.log(lastRecommendedSong.artist_name + " " +  lastRecommendedSong.title);
-				addSongByTitleAndArtist(lastRecommendedSong.title, lastRecommendedSong.artist_name);
+				playlist.addSongByTitleAndArtist(lastRecommendedSong.title, lastRecommendedSong.artist_name);
 			}
 		});
 	}

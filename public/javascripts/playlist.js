@@ -1,48 +1,50 @@
-// Playlist is queue keeping track of all songs will be played in the future.
-var playlist = new Array();
-var first = 0;
-var last = -1;
+// Playlist is queue keeping track of all songs has been played in the past and will be played in the future.
+function Playlist(){
+	this.playlist = new Array();
+	this.first = 0;
+	this.last = -1;
+}
 
-// Add a song id to the end of playlist
-function addSongById(videoId){
-	last++;
-	playlist.push(videoId);
+// Add a song id to the end of playlist.
+Playlist.prototype.addSongById = function(videoId){
+	this.last++;
+	this.playlist.push(videoId);
 	addToEndThumbnails(videoId);
-	if (first === last) notifyPlayerAboutNewSong(); // If there is new song, notify player 
+	if (this.first === this.last) notifyPlayerAboutNewSong(); // If there is new song, notify player 
 }
 
 // Get the next song in the playlist (by id)
 // If there is no next song return -1
-function nextSong(){
-	if (first > last){
+Playlist.prototype.nextSong = function(){
+	if (this.first > this.last){
 		// If there is no song left in playlist, request a recommended song from engine.
 		getRecommendedSong();
 		return "-1";
 	};
 	deleteFirstThumbnail();
-	var result = playlist[first];
-	first++;
+	var result = this.playlist[this.first];
+	this.first++;
 	return result;
 }
 
-function previousSong(){
-	if (first <= 1) return "-1";
+Playlist.prototype.previousSong = function(){
+	if (this.first <= 1) return "-1";
 	
-	first--;
-	var result = playlist[first - 1];
-	addToTopThumbnails(playlist[first]);
+	this.first--;
+	var result = this.playlist[this.first - 1];
+	addToTopThumbnails(this.playlist[this.first]);
 	return result;
 }
 
 // Return the id of the current song playing
-function currentSong(){
-	if (first === 0) return "-1";
+Playlist.prototype.currentSong = function(){
+	if (this.first === 0) return "-1";
 
-	return playlist[first - 1];
+	return this.playlist[this.first - 1];
 }
 
 // Search for a song with a particular title then add it to playlist.
-function addSongByTitleAndArtist(title, artist){
+Playlist.prototype.addSongByTitleAndArtist = function(title, artist){
 	var request = gapi.client.youtube.search.list({
 		q: title + " " + artist,
 		part: 'snippet',
@@ -52,12 +54,15 @@ function addSongByTitleAndArtist(title, artist){
 	request.execute(function(response) {
 	var str = JSON.stringify(response.result);
 	var videoId = response.result.items[0].id.videoId;
-	addSongById(videoId);
+	playlist.addSongById(videoId);
 	});
 }
 
 // Determine whether there are more songs currently available in playlist
-function hasNextSong(){
-	if (first > last) return false;
+Playlist.prototype.hasNextSong = function(){
+	if (this.first > this.last) return false;
 	return true;
-} 
+}
+
+
+var playlist = new Playlist();

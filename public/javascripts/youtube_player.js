@@ -26,7 +26,7 @@ function onPlayerReady(event) {
 function notifyPlayerAboutNewSong(){
 	console.log("In notifyPlayerAboutNewSong");
 
-	if (first > last) return;
+	if (!playlist.hasNextSong()) return;
 	// If player state is either unstarted or ended
 	if (player.getPlayerState() === -1 || player.getPlayerState() === 0)
 		playNext();
@@ -80,7 +80,7 @@ $(document).ready(function(){
 })
 
 function playNext(){
-	nextSongId = nextSong();
+	nextSongId = playlist.nextSong();
     if (nextSongId !== "-1"){
 		player.loadVideoById(nextSongId, 0, "default");
 		// Reset like button
@@ -90,7 +90,7 @@ function playNext(){
 }
 
 function playPrevious(){
-	previousSongId = previousSong();
+	previousSongId = playlist.previousSong();
     if (previousSongId !== "-1"){
     	player.loadVideoById(previousSongId, 0, "default");
     	// Reset like button
@@ -100,6 +100,6 @@ function playPrevious(){
 }
 
 function playCurrent(){
-	currentSongId = currentSong();
+	currentSongId = playlist.currentSong();
 	if (currentSongId !== "-1") player.loadVideoById(currentSongId, 0, "default");
 }
