@@ -27,12 +27,15 @@ html
   margin-top:-30px;
 }
 
-.horizontalui
+.centerElements
 {
+inline:block;
+  
+  width: 50%;
 }
-
 .horizontalli
 {
+  cursor: pointer;
   list-style-type: none;
   float: left;
   padding-left:10px;
