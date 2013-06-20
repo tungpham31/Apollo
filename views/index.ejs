@@ -13,7 +13,7 @@
 	<script src="javascripts/thumbnail.js"></script>
 	<script src="javascripts/recommendation_engine.js"></script>
 
-	// Test metadata.
+	<!-- Test metadata. -->
 	<meta property="fb:app_id" content="512087902184325" />
 	<meta property="og:title" content="I'm yours" />
 	<meta property="og:image" content="https://s-static.ak.fbcdn.net/images/devsite/attachment_blank.png" />
@@ -21,98 +21,102 @@
 	<meta property="og:type" content="music.song" />
 </head>
 <body>
-	<div id="fb-root"></div>
-	<script>
-	window.fbAsyncInit = function() {
-		FB.init({
-    appId      : '512087902184325', // App ID
-    channelUrl : '//localhost:3000/channel.html', // Channel File
-    status     : true, // check login status
-    cookie     : true, // enable cookies to allow the server to access the session
-    xfbml      : true  // parse XFBML
-  });
+  <div id='push'>
+    <div id="fb-root"></div>
+    <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+      appId      : '512087902184325', // App ID
+      channelUrl : '//localhost:3000/channel.html', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true  // parse XFBML
+    });
 
-  // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
-  // for any auth related change, such as login, logout or session refresh. This means that
-  // whenever someone who was previously logged out tries to log in again, the correct case below 
-  // will be handled. 
-  FB.Event.subscribe('auth.authResponseChange', function(response) {
-    // Here we specify what we do with the response anytime this event occurs. 
-    if (response.status === 'connected') {
-    	console.log("In facebook connected");
-      // The response object is returned with a status field that lets the app know the current
-      // login status of the person. In this case, we're handling the situation where they 
-      // have logged in to the app.
-      testAPI();
-    } else if (response.status === 'not_authorized') {
-      // In this case, the person is logged into Facebook, but not into the app, so we call
-      // FB.login() to prompt them to do so. 
-      // In real-life usage, you wouldn't want to immediately prompt someone to login 
-      // like this, for two reasons:
-      // (1) JavaScript created popup windows are blocked by most browsers unless they 
-      // result from direct user interaction (such as a mouse click)
-      // (2) it is a bad experience to be continually prompted to login upon page load.
-      FB.login(function(response){console.log(response);}, {scope: 'publish_actions'});
-    } else {
-      // In this case, the person is not logged into Facebook, so we call the login() 
-      // function to prompt them to do so. Note that at this stage there is no indication
-      // of whether they are logged into the app. If they aren't then they'll see the Login
-      // dialog right after they log in to Facebook. 
-      // The same caveats as above apply to the FB.login() call here.
-      FB.login(function(response){console.log(response);}, {scope: 'publish_actions'});
+    // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
+    // for any auth related change, such as login, logout or session refresh. This means that
+    // whenever someone who was previously logged out tries to log in again, the correct case below 
+    // will be handled. 
+    FB.Event.subscribe('auth.authResponseChange', function(response) {
+      // Here we specify what we do with the response anytime this event occurs. 
+      if (response.status === 'connected') {
+        console.log("In facebook connected");
+        // The response object is returned with a status field that lets the app know the current
+        // login status of the person. In this case, we're handling the situation where they 
+        // have logged in to the app.
+        testAPI();
+      } else if (response.status === 'not_authorized') {
+        // In this case, the person is logged into Facebook, but not into the app, so we call
+        // FB.login() to prompt them to do so. 
+        // In real-life usage, you wouldn't want to immediately prompt someone to login 
+        // like this, for two reasons:
+        // (1) JavaScript created popup windows are blocked by most browsers unless they 
+        // result from direct user interaction (such as a mouse click)
+        // (2) it is a bad experience to be continually prompted to login upon page load.
+        FB.login(function(response){console.log(response);}, {scope: 'publish_actions'});
+      } else {
+        // In this case, the person is not logged into Facebook, so we call the login() 
+        // function to prompt them to do so. Note that at this stage there is no indication
+        // of whether they are logged into the app. If they aren't then they'll see the Login
+        // dialog right after they log in to Facebook. 
+        // The same caveats as above apply to the FB.login() call here.
+        FB.login(function(response){console.log(response);}, {scope: 'publish_actions'});
+      }
+    });
+  };
+
+    // Load the SDK asynchronously
+    (function(d){
+      var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement('script'); js.id = id; js.async = true;
+      js.src = "//connect.facebook.net/en_US/all.js";
+      ref.parentNode.insertBefore(js, ref);
+    }(document));
+
+    // Here we run a very simple test of the Graph API after login is successful. 
+    // This testAPI() function is only called in those cases. 
+    function testAPI() {
+      console.log('Welcome!  Fetching your information.... ');
+      FB.api('/me', function(response) {
+        console.log('Good to see you, ' + response.name + '.');
+      });
+      var accessToken = FB.getAuthResponse().accessToken;
+      console.log(accessToken);
+      FB.api(
+        'me/music.listens',
+        'post',
+        {
+          song: "http://open.spotify.com/track/2aSFLiDPreOVP6KHiWk4lF"
+        },
+        function(response) {
+        // handle the response
+        console.log(response);
+      }
+      );
     }
-  });
-};
+    </script>
+    <!--Below we include the Login Button social plugin. This button uses the JavaScript SDK to-->
+    <!--present a graphical Login button that triggers the FB.login() function when clicked.-->
+    <fb:login-button show-faces="true" width="200" max-rows="1" autologoutlink="true" size="large" perms="publish_actions"></fb:login-button>
 
-  // Load the SDK asynchronously
-  (function(d){
-  	var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-  	if (d.getElementById(id)) {return;}
-  	js = d.createElement('script'); js.id = id; js.async = true;
-  	js.src = "//connect.facebook.net/en_US/all.js";
-  	ref.parentNode.insertBefore(js, ref);
-  }(document));
-
-  // Here we run a very simple test of the Graph API after login is successful. 
-  // This testAPI() function is only called in those cases. 
-  function testAPI() {
-  	console.log('Welcome!  Fetching your information.... ');
-  	FB.api('/me', function(response) {
-  		console.log('Good to see you, ' + response.name + '.');
-  	});
-  	var accessToken = FB.getAuthResponse().accessToken;
-  	console.log(accessToken);
-  	FB.api(
-  		'me/music.listens',
-  		'post',
-  		{
-  			song: "http://open.spotify.com/track/2aSFLiDPreOVP6KHiWk4lF"
-  		},
-  		function(response) {
-    	// handle the response
-    	console.log(response);
-    }
-    );
-  }
-  </script>
-  <!--Below we include the Login Button social plugin. This button uses the JavaScript SDK to-->
-  <!--present a graphical Login button that triggers the FB.login() function when clicked.-->
-  <fb:login-button show-faces="true" width="200" max-rows="1" autologoutlink="true" size="large" perms="publish_actions"></fb:login-button>
-
-  <h1><%= title %></h1>
-  <p>Welcome to <%= title %></p>
-  <form id="search_form">
-  	<input id="search_input" type="text"> Add Song
-  </form>
-  <div id="ytplayer"></div></br>
-
-  <button id="previous_button">Previous</button>
-  <button id="next_button">Next</button>
-  <button id="repeat_button" status="0">Repeat</button>
-  <button id="like_button" value="unliked">Like</button>
-  <button id="dislike_button">Dislike</button>
-
-  <ul id="thumbnail">
-  </ul>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <form id="search_form">
+      <input id="search_input" type="text"> Add Song
+    </form>
+    <div id="ytplayer"></div></br>
+  </div>
+  <div id='footer'>
+    <ul class='horizontalul'>
+      <li class='horizontalli' id="previous_button">Previous</li>
+      <li class='horizontalli' id="next_button">Next</li>
+      <li class='horizontalli' id="repeat_button" status="0">Repeat</li>
+      <li class='horizontalli' id="like_button" value="unliked">Like</li>
+      <li class='horizontalli' id="dislike_button">Dislike</li>
+    </ul>
+    <ul id="thumbnail">
+    </ul>
+  </div>
 </body>
 </html>
